@@ -90,6 +90,8 @@ const updateAllMaterials = () =>
             child.material.needsUpdate = true
             child.castShadow = true
             child.receiveShadow = true
+            model = child
+            console.log(model)
         }
     })
 }
@@ -116,11 +118,13 @@ debugObject.envMapIntensity = 5
 /**
  * Models
  */
+
+let model = null
 gltfLoader.load(
-    '/models/DamagedHelmet/glTF/DamagedHelmet.gltf',
+    '/models/Key/glTF/key.gltf',
     (gltf) =>
-    {
-        gltf.scene.scale.set(2.5, 2.5, 2.5)
+    {   
+        gltf.scene.scale.set(10, 10, 10)
         gltf.scene.rotation.y = Math.PI * 0.5
         scene.add(gltf.scene)
 
@@ -190,13 +194,23 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+//Clock
+const clock = new THREE.Clock()
+
 /**
  * Animate
  */
 const tick = () =>
-{
+{   
+    // Clock
+    const elapsedTime = clock.getElapsedTime()
+
     // Update controls
     controls.update()
+
+    //Update Key Position
+    model.position.y = Math.sin(elapsedTime*2)
+    // console.log(model)
 
     // Render
     renderer.render(scene, camera)
