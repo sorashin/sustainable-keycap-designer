@@ -8,6 +8,7 @@ import { Color } from 'three'
 /**
  * Loaders
  */
+let sceneReady = false
 const loadingBarElement = document.querySelector('.loading-bar')
 const loadingManager = new THREE.LoadingManager(
     // Loaded
@@ -22,7 +23,11 @@ const loadingManager = new THREE.LoadingManager(
             // Update loadingBarElement
             loadingBarElement.classList.add('ended')
             loadingBarElement.style.transform = ''
-        }, 500)
+        }, 500),
+        window.setTimeout(() =>
+        {
+            sceneReady = true
+        }, 2000)
     },
 
     // Progress
@@ -111,22 +116,26 @@ const keys =[
     {
         model:null,
         title:'SwitchBlue',
-        description:'Switchコントローラーの青色の廃材を破砕して作成しました'
+        description:'Switchコントローラーの青色の廃材を破砕して作成しました',
+        imgUrl:'/images/colors/00.jpg'
     },
     {
         model:null,
         title:'消えいろピットブルー',
-        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです'
+        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
+        imgUrl:'/images/colors/01.jpg'
     },
     {
         model:null,
         title:'ソフトバンクルーターアイボリー',
-        description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです'
+        description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです',
+        imgUrl:'/images/colors/02.jpg'
     },
     {
         model:null,
         title:'消えいろピットブルー',
-        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです'
+        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
+        imgUrl:'/images/colors/03.jpg'
     },
 ]
 
@@ -150,6 +159,7 @@ for (const index in keys){
 const updateText = ()=>{
     document.querySelector('.title').textContent = `${keys[currentKey].title}`
     document.querySelector('.description').textContent = `${keys[currentKey].description}`
+    document.querySelector('.thumbnail').style.backgroundImage = `url(${keys[currentKey].imgUrl})`
 }
 const highlightSelected = ()=>{
     if(previousKey!=null && currentKey!=null){
@@ -274,23 +284,24 @@ const tick = () =>
 
     //Update Key Position
     // if (model) model.position.y = Math.sin(elapsedTime * 2)
-    
-    // Cast a ray from the mouse and handle events
-    raycaster.setFromCamera(mouse, camera)
-    
-    const intersects = raycaster.intersectObjects(scene.children,true)
-    if (intersects.length){
+    if(sceneReady){
+        // Cast a ray from the mouse and handle events
+        raycaster.setFromCamera(mouse, camera)
         
-        if(currentKey != intersects[0].object.name){
-            currentKey=intersects[0].object.name
+        const intersects = raycaster.intersectObjects(scene.children,true)
+        if (intersects.length){
             
-            updateText()
-            highlightSelected()
-            console.log(currentKey, previousKey)
+            if(currentKey != intersects[0].object.name){
+                currentKey=intersects[0].object.name
+                
+                updateText()
+                highlightSelected()
+                console.log(currentKey, previousKey)
+            }
+            previousKey = currentKey
+            
+    
         }
-        previousKey = currentKey
-        
-
     }
     
     // if(intersects.length)
