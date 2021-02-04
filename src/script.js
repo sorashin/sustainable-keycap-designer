@@ -90,8 +90,8 @@ const updateAllMaterials = () =>
             child.material.needsUpdate = true
             child.castShadow = true
             child.receiveShadow = true
-            model = child
-            console.log(model)
+            // model = child
+            // console.log(model.position)
         }
     })
 }
@@ -124,10 +124,10 @@ gltfLoader.load(
     '/models/Key/glTF/key.gltf',
     (gltf) =>
     {   
-        gltf.scene.scale.set(10, 10, 10)
+        gltf.scene.scale.set(1, 1, 1)
         gltf.scene.rotation.y = Math.PI * 0.5
         scene.add(gltf.scene)
-
+        model = gltf.scene
         updateAllMaterials()
     }
 )
@@ -209,8 +209,8 @@ const tick = () =>
     controls.update()
 
     //Update Key Position
-    model.position.y = Math.sin(elapsedTime*2)
-    // console.log(model)
+    if (model) model.position.y = Math.sin(elapsedTime * 2)
+    // console.log(model.position)
 
     // Render
     renderer.render(scene, camera)
