@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { gsap } from 'gsap'
+import { Color } from 'three'
 
 /**
  * Loaders
@@ -96,41 +97,70 @@ const updateAllMaterials = () =>
     })
 }
 
-/**
- * Environment map
- */
-const environmentMap = cubeTextureLoader.load([
-    '/textures/environmentMaps/0/px.jpg',
-    '/textures/environmentMaps/0/nx.jpg',
-    '/textures/environmentMaps/0/py.jpg',
-    '/textures/environmentMaps/0/ny.jpg',
-    '/textures/environmentMaps/0/pz.jpg',
-    '/textures/environmentMaps/0/nz.jpg'
-])
+scene.background = new THREE.Color('#cccccc')
 
-environmentMap.encoding = THREE.sRGBEncoding
-
-scene.background = environmentMap
-scene.environment = environmentMap
 
 debugObject.envMapIntensity = 5
 
 /**
  * Models
  */
+let currentKey = null
+let previousKey = null
+const keys =[
+    {
+        model:null,
+        title:'SwitchBlue',
+        description:'Switchコントローラーの青色の廃材を破砕して作成しました'
+    },
+    {
+        model:null,
+        title:'消えいろピットブルー',
+        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです'
+    },
+    {
+        model:null,
+        title:'ソフトバンクルーターアイボリー',
+        description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです'
+    },
+    {
+        model:null,
+        title:'消えいろピットブルー',
+        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです'
+    },
+]
 
-let model = null
-gltfLoader.load(
-    '/models/Key/glTF/key.gltf',
-    (gltf) =>
-    {   
-        gltf.scene.scale.set(1, 1, 1)
-        gltf.scene.rotation.y = Math.PI * 0.5
-        scene.add(gltf.scene)
-        model = gltf.scene
-        updateAllMaterials()
+for (const index in keys){
+    gltfLoader.load(
+        `/models/Key/glTF/key_${index}.gltf`,
+        (gltf) =>
+        {   
+            keys[index].model = gltf.scene
+            keys[index].model.children[2].name = `${index}`
+            keys[index].model.scale.set(1, 1, 1)
+            keys[index].model.position.set(0,0,index*3)
+            keys[index].model.rotation.y = Math.PI * 0.5
+            console.log(keys[index].model)
+            scene.add(keys[index].model)
+            updateAllMaterials()
+        }
+    )
+}
+
+const updateText = ()=>{
+    document.querySelector('.title').textContent = `${keys[currentKey].title}`
+    document.querySelector('.description').textContent = `${keys[currentKey].description}`
+}
+const highlightSelected = ()=>{
+    if(previousKey!=null && currentKey!=null){
+        keys[currentKey].model.scale.set(1.1,1.1,1.1)
+        keys[previousKey].model.scale.set(1,1,1)
     }
-)
+    
+    // console.log(keys[currentKey].model.children[2].material)
+}
+// currentKey.onChange = updateText
+
 
 /**
  * Lights
@@ -143,27 +173,6 @@ directionalLight.shadow.normalBias = 0.05
 directionalLight.position.set(0.25, 3, - 2.25)
 scene.add(directionalLight)
 
-/**
- * Objects
- */
-const object1 = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 16, 16),
-    new THREE.MeshBasicMaterial({ color: '#ff0000' })
-)
-object1.position.x = - 2
-
-const object2 = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 16, 16),
-    new THREE.MeshBasicMaterial({ color: '#ff0000' })
-)
-
-const object3 = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 16, 16),
-    new THREE.MeshBasicMaterial({ color: '#ff0000' })
-)
-object3.position.x = 2
-
-scene.add(object1, object2, object3)
 
 
 /**
@@ -171,9 +180,6 @@ scene.add(object1, object2, object3)
  */
 const raycaster = new THREE.Raycaster()
 let currentIntersect = null
-const rayOrigin = new THREE.Vector3(- 3, 0, 0)
-const rayDirection = new THREE.Vector3(10, 0, 0)
-rayDirection.normalize()
 
 /**
  * Sizes
@@ -267,32 +273,44 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     //Update Key Position
-    if (model) model.position.y = Math.sin(elapsedTime * 2)
+    // if (model) model.position.y = Math.sin(elapsedTime * 2)
     
     // Cast a ray from the mouse and handle events
     raycaster.setFromCamera(mouse, camera)
-    let objectsToTest = []
-    if (model) objectsToTest = [model, object1, object2, object3]
-    const intersects = raycaster.intersectObjects(objectsToTest)
-    console.log(intersects)
-    if(intersects.length)
-    {
-        if(!currentIntersect)
-        {
-            console.log('mouse enter')
-        }
-
-        currentIntersect = intersects[0]
-    }
-    else
-    {
-        if(currentIntersect)
-        {
-            console.log('mouse leave')
-        }
+    
+    const intersects = raycaster.intersectObjects(scene.children,true)
+    if (intersects.length){
         
-        currentIntersect = null
+        if(currentKey != intersects[0].object.name){
+            currentKey=intersects[0].object.name
+            
+            updateText()
+            highlightSelected()
+            console.log(currentKey, previousKey)
+        }
+        previousKey = currentKey
+        
+
     }
+    
+    // if(intersects.length)
+    // {
+    //     if(!currentIntersect)
+    //     {
+    //         console.log('mouse enter')
+    //     }
+
+    //     currentIntersect = intersects[0]
+    // }
+    // else
+    // {
+    //     if(currentIntersect)
+    //     {
+    //         console.log('mouse leave')
+    //     }
+        
+    //     currentIntersect = null
+    // }
 
 
     // Update controls

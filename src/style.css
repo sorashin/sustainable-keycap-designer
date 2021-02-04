@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&display=swap');
 *
 {
     margin: 0;
@@ -8,7 +9,10 @@ html,
 body
 {
     overflow: hidden;
+    font-family: 'Noto Sans JP', sans-serif;
 }
+
+
 
 .webgl
 {
@@ -35,4 +39,20 @@ body
     transform: scaleX(0);
     transform-origin: 100% 0;
     transition: transform 1.5s ease-in-out;
+}
+
+.info{
+    position: absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#29191977;
+    width:100%;
+    max-width:480px;
+    padding:32px;
+    height:100px;
+}
+.title{
+    color:#29191998;
+    font-weight:800;
 }
