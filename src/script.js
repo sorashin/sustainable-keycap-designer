@@ -144,6 +144,38 @@ directionalLight.position.set(0.25, 3, - 2.25)
 scene.add(directionalLight)
 
 /**
+ * Objects
+ */
+const object1 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
+)
+object1.position.x = - 2
+
+const object2 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
+)
+
+const object3 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.MeshBasicMaterial({ color: '#ff0000' })
+)
+object3.position.x = 2
+
+scene.add(object1, object2, object3)
+
+
+/**
+ * Raycaster
+ */
+const raycaster = new THREE.Raycaster()
+let currentIntersect = null
+const rayOrigin = new THREE.Vector3(- 3, 0, 0)
+const rayDirection = new THREE.Vector3(10, 0, 0)
+rayDirection.normalize()
+
+/**
  * Sizes
  */
 const sizes = {
@@ -164,6 +196,35 @@ window.addEventListener('resize', () =>
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+/**
+ * Mouse
+ */
+const mouse = new THREE.Vector2()
+
+window.addEventListener('mousemove', (event) =>
+{
+    mouse.x = event.clientX / sizes.width * 2 - 1
+    mouse.y = - (event.clientY / sizes.height) * 2 + 1
+    
+})
+
+window.addEventListener('click', () =>
+{
+    if(currentIntersect)
+    {
+        switch(currentIntersect.object)
+        {
+            case model:
+                console.log('click on model')
+                break
+
+            case model2:
+                console.log('click on model2')
+                break
+        }
+    }
 })
 
 /**
@@ -205,12 +266,37 @@ const tick = () =>
     // Clock
     const elapsedTime = clock.getElapsedTime()
 
-    // Update controls
-    controls.update()
-
     //Update Key Position
     if (model) model.position.y = Math.sin(elapsedTime * 2)
-    // console.log(model.position)
+    
+    // Cast a ray from the mouse and handle events
+    raycaster.setFromCamera(mouse, camera)
+    let objectsToTest = []
+    if (model) objectsToTest = [model, object1, object2, object3]
+    const intersects = raycaster.intersectObjects(objectsToTest)
+    console.log(intersects)
+    if(intersects.length)
+    {
+        if(!currentIntersect)
+        {
+            console.log('mouse enter')
+        }
+
+        currentIntersect = intersects[0]
+    }
+    else
+    {
+        if(currentIntersect)
+        {
+            console.log('mouse leave')
+        }
+        
+        currentIntersect = null
+    }
+
+
+    // Update controls
+    controls.update()
 
     // Render
     renderer.render(scene, camera)
