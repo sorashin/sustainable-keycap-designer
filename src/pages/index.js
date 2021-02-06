@@ -1,9 +1,12 @@
 import * as React from "react"
 import BasicScene from '../scenes/BasicScene'
+import styled from "styled-components"
+import Layout from '../components/layout'
 
 // styles
 const pageStyles = {
-  color: "#232129",
+  margin:0,
+  padding:0,
   // padding: "96px",
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
 }
@@ -13,9 +16,9 @@ const pageStyles = {
 const IndexPage = () => {
   
   return (
-    // <main style={pageStyles}>
-      <BasicScene/>
-    // </main>
+    <Layout>
+      <BasicScene style={pageStyles}/>
+    </Layout>
   )
 }
 

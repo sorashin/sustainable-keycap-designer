@@ -6,6 +6,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 // import { Color } from 'three'
 
 
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
 const newScene = () => {
   const scene = new THREE.Scene()
   return scene
@@ -18,6 +23,8 @@ const newCamera = () => {
   camera.position.z = 400
   return camera
 }
+
+
 
 const newRenderer = (mount) => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -50,8 +57,23 @@ const BaseScene = () => {
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
+    window.addEventListener('resize', () =>
+    {
+        // Update sizes
+        sizes.width = window.innerWidth
+        sizes.height = window.innerHeight
+
+        // Update camera
+        camera.aspect = sizes.width / sizes.height
+        camera.updateProjectionMatrix()
+
+        // Update renderer
+        renderer.setSize(sizes.width, sizes.height)
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    })
+
     // Controls
-    const controls = new OrbitControls(camera, scene)
+    const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     
     // render
