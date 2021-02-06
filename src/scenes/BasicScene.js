@@ -1,5 +1,9 @@
 import React, { useEffect, createRef } from 'react'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+// import { gsap } from 'gsap'
+// import { Color } from 'three'
 
 
 const newScene = () => {
@@ -32,6 +36,8 @@ const BaseScene = () => {
     // scene
     const scene = newScene()
 
+    
+
     // camera
     const camera = newCamera()
 
@@ -44,17 +50,29 @@ const BaseScene = () => {
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
+    // Controls
+    const controls = new OrbitControls(camera, scene)
+    controls.enableDamping = true
+    
     // render
     const render = () => {
       renderer.render(scene, camera)
     }
+    //Clock
+    const clock = new THREE.Clock()
 
     // animation
-    const animate = () => {
-      requestAnimationFrame(animate)
-      render()
+    const tick = () => {
+        // Clock
+        const elapsedTime = clock.getElapsedTime()
+        // Update controls
+        controls.update()
+        // Call tick again on the next frame
+        requestAnimationFrame(tick)
+        // Render
+        render()
     }
-    animate()
+    tick()
   }, [mount])
   return (
     <>
