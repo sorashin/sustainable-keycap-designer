@@ -2,6 +2,7 @@ import React, { useEffect, createRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
 
@@ -9,15 +10,13 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 const debugObject = {}
 //Model Loader
 const gltfLoader = new GLTFLoader()
-
+// Cavas Size
 const sizes = {
     width: typeof window !== `undefined`? window.innerWidth:null,
     height: typeof window !== `undefined`? window.innerHeight:null
 }
 
-/**
- * Models
- */
+//Models
 let currentKey = null
 let previousKey = null
 const keys =[
@@ -59,9 +58,7 @@ const newCamera = () => {
     return camera
 }
 
-/**
- * Update all materials
- */
+//updateAllMaterials
 const updateAllMaterials = (scene) =>
 {
     scene.traverse((child) =>
