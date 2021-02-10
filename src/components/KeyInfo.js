@@ -30,12 +30,13 @@ const Thumbnail = styled.div`
   border-radius:8px;
   background-size:cover ;
   background-repeat: no-repeat;
+  background-image: url(${props => props.url})
 `
 
 export default function KeyInfo({keyId, keys, color}) {
   return (
     <Info>
-        <Thumbnail/>
+        <Thumbnail url={color[keys[keyId].color].imgUrl}/>
         <Text>
           <Title>{color[keys[keyId].color].title}</Title>
           <Description>{color[keys[keyId].color].description}</Description>
