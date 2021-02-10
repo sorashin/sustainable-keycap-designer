@@ -1,10 +1,13 @@
-import React, { useEffect, createRef } from 'react'
+import React, { useEffect, createRef, useState} from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-
+import KeyInfo from '../components/KeyInfo'
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
+
+
+
 
 // Debug
 const debugObject = {}
@@ -15,36 +18,36 @@ const sizes = {
     width: typeof window !== `undefined`? window.innerWidth:null,
     height: typeof window !== `undefined`? window.innerHeight:null
 }
+//Raycaster
+const raycaster = new THREE.Raycaster()
 
 //Models
-let currentKey = null
-let previousKey = null
-const keys =[
-    {
-        model:null,
-        title:'SwitchBlue',
-        description:'Switchコントローラーの青色の廃材を破砕して作成しました',
-        imgUrl:'/images/colors/00.jpg'
-    },
-    {
-        model:null,
-        title:'消えいろピットブルー',
-        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
-        imgUrl:'/images/colors/01.jpg'
-    },
-    {
-        model:null,
-        title:'ソフトバンクルーターアイボリー',
-        description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです',
-        imgUrl:'/images/colors/02.jpg'
-    },
-    {
-        model:null,
-        title:'消えいろピットブルー',
-        description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
-        imgUrl:'/images/colors/03.jpg'
-    },
-]
+// const keys =[
+//     {
+//         model:null,
+//         title:'SwitchBlue',
+//         description:'Switchコントローラーの青色の廃材を破砕して作成しました',
+//         imgUrl:'/images/colors/00.jpg'
+//     },
+//     {
+//         model:null,
+//         title:'消えいろピットブルー',
+//         description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
+//         imgUrl:'/images/colors/01.jpg'
+//     },
+//     {
+//         model:null,
+//         title:'ソフトバンクルーターアイボリー',
+//         description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです',
+//         imgUrl:'/images/colors/02.jpg'
+//     },
+//     {
+//         model:null,
+//         title:'消えいろピットブルー',
+//         description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
+//         imgUrl:'/images/colors/03.jpg'
+//     },
+// ]
 
 const newScene = () => {
   const scene = new THREE.Scene()
@@ -93,12 +96,14 @@ const newRenderer = (mount) => {
   return renderer
 }
 
-const BaseScene = () => {
+
+
+const BaseScene = ({keys, color}) => {
   const mount = createRef()
+  const [key, setKey] = useState(0)
+
   useEffect(() => {
-    
-    
-    
+
     // scene
     const scene = newScene()
     
@@ -117,6 +122,8 @@ const BaseScene = () => {
     const light = newLight()
     scene.add(light)
 
+
+
     for (const index in keys){
         gltfLoader.load(
             `/models/keys/glTF/key_${index}.gltf`,
@@ -133,7 +140,15 @@ const BaseScene = () => {
             }
         )
     }
+    //Mouse
+    const mouse = new THREE.Vector2()
 
+    window.addEventListener('mousemove', (event) =>
+    {
+        mouse.x = event.clientX / sizes.width * 2 - 1
+        mouse.y = - (event.clientY / sizes.height) * 2 + 1
+        
+    })
 
     //Screen Resize
     window.addEventListener('resize', () =>
@@ -160,12 +175,24 @@ const BaseScene = () => {
       renderer.render(scene, camera)
     }
     //Clock
-    const clock = new THREE.Clock()
+    // const clock = new THREE.Clock()
 
     // animation
     const tick = () => {
         // Clock
-        const elapsedTime = clock.getElapsedTime()
+        // const elapsedTime = clock.getElapsedTime()
+        //Raycaster
+        raycaster.setFromCamera(mouse, camera)
+        
+        const intersects = raycaster.intersectObjects(scene.children,true)
+        if (intersects.length){
+          let currentKey = parseInt(intersects[0].object.name, 10)
+          if(currentKey && currentKey != key){
+            setKey(currentKey)
+            // console.log(currentKey)
+          }
+        }
+
         // Update controls
         controls.update()
         // Call tick again on the next frame
@@ -174,11 +201,12 @@ const BaseScene = () => {
         render()
     }
     tick()
-  }, [mount])
+  }, [])
   return (
     <>
       <div ref={mount} />
+      <KeyInfo keyId ={key} keys={keys} color={color}/>
     </>
-  )
+  ) 
 }
 export default BaseScene
