@@ -3,10 +3,10 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import KeyInfo from '../components/KeyInfo'
+import Palette from '../components/Palette'
+import styled from "styled-components"
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
-
-
 
 
 // Debug
@@ -22,32 +22,7 @@ const sizes = {
 const raycaster = new THREE.Raycaster()
 
 //Models
-// const keys =[
-//     {
-//         model:null,
-//         title:'SwitchBlue',
-//         description:'Switchコントローラーの青色の廃材を破砕して作成しました',
-//         imgUrl:'/images/colors/00.jpg'
-//     },
-//     {
-//         model:null,
-//         title:'消えいろピットブルー',
-//         description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
-//         imgUrl:'/images/colors/01.jpg'
-//     },
-//     {
-//         model:null,
-//         title:'ソフトバンクルーターアイボリー',
-//         description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです',
-//         imgUrl:'/images/colors/02.jpg'
-//     },
-//     {
-//         model:null,
-//         title:'消えいろピットブルー',
-//         description:'スティックのり’消えいろピット’の廃材を使用した青色キーです',
-//         imgUrl:'/images/colors/03.jpg'
-//     },
-// ]
+
 
 const newScene = () => {
   const scene = new THREE.Scene()
@@ -98,9 +73,13 @@ const newRenderer = (mount) => {
 
 
 
+
 const BaseScene = ({keys, color}) => {
   const mount = createRef()
   const [key, setKey] = useState(0)
+  const [selectedKey, setSelectedKey] = useState(0)
+  const [open, setOpen] = useState(false)
+  const selectStatus = {isOpen:open, currentKey:selectedKey }
 
   useEffect(() => {
 
@@ -142,6 +121,7 @@ const BaseScene = ({keys, color}) => {
     }
     //Mouse
     const mouse = new THREE.Vector2()
+    let currentIntersect = null
 
     window.addEventListener('mousemove', (event) =>
     {
@@ -149,6 +129,23 @@ const BaseScene = ({keys, color}) => {
         mouse.y = - (event.clientY / sizes.height) * 2 + 1
         
     })
+
+    window.addEventListener('click', () =>
+    {
+      const intersects = raycaster.intersectObjects(scene.children,true)
+      if (intersects.length){
+        setOpen(true)
+        let currentKey = parseInt(intersects[0].object.name, 10)
+        setSelectedKey(currentKey)
+        console.log('キーの上')
+      }else{
+        setOpen(false)
+        console.log('キーのハズレ')
+        setSelectedKey(null)
+      }
+    })
+      
+
 
     //Screen Resize
     window.addEventListener('resize', () =>
@@ -186,11 +183,14 @@ const BaseScene = ({keys, color}) => {
         
         const intersects = raycaster.intersectObjects(scene.children,true)
         if (intersects.length){
+          currentIntersect = intersects[0]
           let currentKey = parseInt(intersects[0].object.name, 10)
           if(currentKey && currentKey != key){
             setKey(currentKey)
             // console.log(currentKey)
           }
+        }else{
+          currentIntersect = null
         }
 
         // Update controls
@@ -205,6 +205,7 @@ const BaseScene = ({keys, color}) => {
   return (
     <>
       <div ref={mount} />
+      <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div>
       <KeyInfo keyId ={key} keys={keys} color={color}/>
     </>
   ) 
