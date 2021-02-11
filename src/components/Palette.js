@@ -1,19 +1,35 @@
-import React from "react"
+import React, { useCallback } from "react"
 import styled from "styled-components"
 
 
-const Info = styled.div`
-    position:absolute;
-    right:0;
+const Colors = styled.ul`
+    position: absolute;
     top:0;
-    width:200px;
-    height:200px;
-    background-color:'aqua';
-
+    bottom:0;
+    right: ${props => props.isOpen? '0%' : '-100%'} ;
+    transition:all 0.4s ease-in-out;
+    a{
+      line-height:4;
+      border-bottom:solid 1px #eeeeee;
+      cursor:pointer;
+    }
 `
 
-export default function Palette() {
+
+
+
+export default function Palette({color, keys, isOpen, currentKey}) {
+  const listColors = color.map((key, id) =>
+        <li key={id}><a>{key.title}</a></li>
+      )
+
+  // const changeKey = useCallback(()=>{
+    
+  // },[])
+
   return (
-    <Info>こんな</Info>
+    <Colors isOpen={isOpen}>
+      {listColors}
+    </Colors>
   )
 }

@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import KeyInfo from '../components/KeyInfo'
 import Palette from '../components/Palette'
-import styled from "styled-components"
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
 
@@ -205,7 +204,8 @@ const BaseScene = ({keys, color}) => {
   return (
     <>
       <div ref={mount} />
-      <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div>
+      {/* <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div> */}
+      <Palette color={color} keys={keys} isOpen={selectStatus.isOpen} currentKey={selectStatus.currentKey}/>
       <KeyInfo keyId ={key} keys={keys} color={color}/>
     </>
   ) 
