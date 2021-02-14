@@ -17,11 +17,11 @@ export const useData = (currentKeyIndex) =>{
         {index: 2, color:'#5bf2ff', title: "ソフトバンクルーターアイボリー", description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです', imgUrl:'/images/colors/02.jpg'},
     ]
     
-    const keyData = setData(keysJSON)
+    const keyData = 'hi'
 
     const currentKey = currentKeyIndex
     const updateColor = (currentKeyIndex) =>{
-        keyData[currentKeyIndex].color = 2
+        // keyData[currentKeyIndex].color = 2
     }
 
     return [keyData, updateColor]
