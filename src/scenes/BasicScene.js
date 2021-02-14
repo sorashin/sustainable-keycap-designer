@@ -117,18 +117,18 @@ const BaseScene = () => {
 
 
 
-    for (const index in keysJSON){
+    for (const index in keysData){
         gltfLoader.load(
             `/models/keys/glTF/key_${index}.gltf`,
             (gltf) =>
             {   
-                keysJSON[index].model = gltf.scene
-                keysJSON[index].model.children[2].name = `${index}`
-                keysJSON[index].model.scale.set(1, 1, 1)
-                keysJSON[index].model.position.set(0,0,index*3)
-                keysJSON[index].model.rotation.y = Math.PI * 0.5
-                console.log(keysJSON[index].model)
-                scene.add(keysJSON[index].model)
+                keysData[index].model = gltf.scene
+                keysData[index].model.children[2].name = `${index}`
+                keysData[index].model.scale.set(1, 1, 1)
+                keysData[index].model.position.set(0,0,index*3)
+                keysData[index].model.rotation.y = Math.PI * 0.5
+                console.log(keysData[index].model)
+                scene.add(keysData[index].model)
                 updateAllMaterials(scene)
             }
         )
