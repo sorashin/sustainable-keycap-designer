@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import KeyInfo from '../components/KeyInfo'
 import Palette from '../components/Palette'
+import useData from '../utils/useData'
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
 
@@ -71,7 +72,13 @@ const newRenderer = (mount) => {
 }
 
 
+// const TestCustomHook = () =>{
+//   const [keyData, updateColor] = useData(selectedKey)
+//   return (
+//     <div>{keyData}</div>
+//   )
 
+// }
 
 const BaseScene = ({keys, color}) => {
   const mount = createRef()
@@ -79,6 +86,8 @@ const BaseScene = ({keys, color}) => {
   const [selectedKey, setSelectedKey] = useState(0)
   const [open, setOpen] = useState(false)
   const selectStatus = {isOpen:open, currentKey:selectedKey }
+
+  // const [keyData, updateColor] = useData(selectedKey)
 
   useEffect(() => {
 
@@ -204,9 +213,10 @@ const BaseScene = ({keys, color}) => {
   return (
     <>
       <div ref={mount} />
-      {/* <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div> */}
+      <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div>
       <Palette color={color} keys={keys} isOpen={selectStatus.isOpen} currentKey={selectStatus.currentKey}/>
       <KeyInfo keyId ={key} keys={keys} color={color}/>
+      {/* {TestCustomHook()} */}
     </>
   ) 
 }
