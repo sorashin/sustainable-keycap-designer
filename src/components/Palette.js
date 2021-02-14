@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 
 
@@ -18,9 +18,19 @@ const Colors = styled.ul`
 
 
 
-export default function Palette({color, keys, isOpen, currentKey}) {
-  const listColors = color.map((key, id) =>
-        <li key={id}><a>{key.title}</a></li>
+export default function Palette({colorJSON, keysData, isOpen, currentKey}) {
+  
+  //クリックしたキーの色を変更
+  const updateColor = (selectedKey)=>{
+    if(keysData[currentKey] && isOpen){
+      let key = keysData[currentKey]
+      key.color = 2
+      console.log(keysData)
+    }
+  }
+
+  const listColors = colorJSON.map((key, id) =>
+        <li key={id}><a onClick={updateColor(currentKey)}>{key.title}</a></li>
       )
 
   // const changeKey = useCallback(()=>{

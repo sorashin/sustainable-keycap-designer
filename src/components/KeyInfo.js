@@ -33,13 +33,13 @@ const Thumbnail = styled.div`
   background-image: url(${props => props.url})
 `
 
-export default function KeyInfo({keyId, keys, color}) {
+export default function KeyInfo({keyId, keysData, colorJSON}) {
   return (
     <Info>
-        <Thumbnail url={color[keys[keyId].color].imgUrl}/>
+        <Thumbnail url={colorJSON[keysData[keyId].color].imgUrl}/>
         <Text>
-          <Title>{color[keys[keyId].color].title}</Title>
-          <Description>{color[keys[keyId].color].description}</Description>
+          <Title>{colorJSON[keysData[keyId].color].title}</Title>
+          <Description>{colorJSON[keysData[keyId].color].description}</Description>
         </Text>
     </Info>
   )

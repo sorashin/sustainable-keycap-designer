@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import KeyInfo from '../components/KeyInfo'
 import Palette from '../components/Palette'
-import {useData} from '../utils/useData'
 // import { gsap } from 'gsap'
 // import { Color } from 'three'
 
@@ -71,18 +70,33 @@ const newRenderer = (mount) => {
   return renderer
 }
 
+const keysJSON = [
+  {index: 0, name: 'F', color:1},
+  {index: 1, name: 'G', color:1},
+  {index: 2, name: 'H', color:0},
+  {index: 3, name: 'J', color:1},
+]
 
-const BaseScene = ({keys, color}) => {
+const colorJSON = [
+  {index: 0, color:'#5bf2ff', title: "SwitchBlue", description:'Switchコントローラーの青色の廃材を破砕して作成しました', imgUrl:'/images/colors/00.jpg'},
+  {index: 1, color:'#5bf2ff', title: "消えいろピットブルー", description:'スティックのり’消えいろピット’の廃材を使用した青色キーです', imgUrl:'/images/colors/01.jpg'},
+  {index: 2, color:'#5bf2ff', title: "ソフトバンクルーターアイボリー", description:'ソフトバンクのルーターの廃棄品の筐体を破砕して作成したアイボリーのキーです', imgUrl:'/images/colors/02.jpg'},
+]
+
+const BaseScene = () => {
   const mount = createRef()
   const [key, setKey] = useState(0)
   const [selectedKey, setSelectedKey] = useState(0)
   const [open, setOpen] = useState(false)
   const selectStatus = {isOpen:open, currentKey:selectedKey }
+  const [keysData, setKeysData] = useState(keysJSON)
 
-  const [keyData, updateColor] = useData(selectedKey)
+  // const [keyData, updateColor] = useData(null)
+  
+  
 
   useEffect(() => {
-
+    
     // scene
     const scene = newScene()
     
@@ -103,18 +117,18 @@ const BaseScene = ({keys, color}) => {
 
 
 
-    for (const index in keys){
+    for (const index in keysJSON){
         gltfLoader.load(
             `/models/keys/glTF/key_${index}.gltf`,
             (gltf) =>
             {   
-                keys[index].model = gltf.scene
-                keys[index].model.children[2].name = `${index}`
-                keys[index].model.scale.set(1, 1, 1)
-                keys[index].model.position.set(0,0,index*3)
-                keys[index].model.rotation.y = Math.PI * 0.5
-                console.log(keys[index].model)
-                scene.add(keys[index].model)
+                keysJSON[index].model = gltf.scene
+                keysJSON[index].model.children[2].name = `${index}`
+                keysJSON[index].model.scale.set(1, 1, 1)
+                keysJSON[index].model.position.set(0,0,index*3)
+                keysJSON[index].model.rotation.y = Math.PI * 0.5
+                console.log(keysJSON[index].model)
+                scene.add(keysJSON[index].model)
                 updateAllMaterials(scene)
             }
         )
@@ -138,6 +152,10 @@ const BaseScene = ({keys, color}) => {
         let currentKey = parseInt(intersects[0].object.name, 10)
         setSelectedKey(currentKey)
         console.log('キーの上')
+
+        
+
+
       }else{
         setOpen(false)
         console.log('キーのハズレ')
@@ -187,7 +205,6 @@ const BaseScene = ({keys, color}) => {
           let currentKey = parseInt(intersects[0].object.name, 10)
           if(currentKey && currentKey != key){
             setKey(currentKey)
-            // console.log(currentKey)
           }
         }else{
           currentIntersect = null
@@ -206,8 +223,8 @@ const BaseScene = ({keys, color}) => {
     <>
       <div ref={mount} />
       <div>{selectStatus.isOpen ? 'true':'false'}{selectStatus.currentKey}</div>
-      <Palette color={color} keys={keys} isOpen={selectStatus.isOpen} currentKey={selectStatus.currentKey}/>
-      <KeyInfo keyId ={key} keys={keys} color={color}/>
+      <Palette colorJSON={colorJSON} keysData={keysData} isOpen={selectStatus.isOpen} currentKey={selectStatus.currentKey}/>
+      <KeyInfo keyId ={key} keysData={keysData} colorJSON={colorJSON}/>
       {/* {TestCustomHook()} */}
     </>
   ) 
